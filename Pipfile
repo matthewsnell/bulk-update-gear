@@ -1,0 +1,18 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+flask = "*"
+requests = "*"
+httpie = "*"
+wtforms = "*"
+jinja2 = "==2.11.2"
+gunicorn = "*"
+celery = "*"
+redis = "*"
+[requires]
+python_version = "3.6"

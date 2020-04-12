@@ -1,0 +1,23 @@
+{%  extends 'layout.html' %}
+
+{% block body %}
+        <h1>About this tool</h1>
+        <p>This tool enables you to add gear to previous activities in one go. You can configure a date range or just add
+            to all activities. We can process up to 500 activities every 15 minutes due
+            to limits imposed on us by Strava. If you have more activities than this limit you can do it in several parts.
+            <span class="bold"> We are not affiliated or endorsed by Strava.</span></p>
+    <hr>
+        <h2>Get started</h2>
+        <p><span class="bold">Click the button below</span> so we can access and update your activities.
+            This will take you to Strava's website to login and grant us permission. If you only want public activities
+            updated you can untick <code>View data about your private activities</code>. The other two boxes
+            <span class="bold">must</span> be ticked for the tool to work. You will then be able to select and add your
+        gear.</p>
+        <button id="authorize">
+            <a href="https://www.strava.com/oauth/authorize?client_id=42825&response_type=code&redirect_uri=
+{{ url }}exchange_token&approval_propt=force&scope=activity:read_all,profile:read_all,activity:write">
+            <img src="../static/img/btn_strava_connectwith_orange.svg" alt="click to authorize">
+        </a>
+        </button>
+    <hr>
+{%  endblock %}

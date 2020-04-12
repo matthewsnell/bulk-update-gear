@@ -1,0 +1,36 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<form method="post" action="" id="gear-form">
+<h2 id="form-heading">Configure</h2>
+    <p>Select the gear you want to add and a date range if you wish. Dates can be left blank.</p>
+    <p>This can take some time if there are lots of activities.</p>
+    <hr>
+    <div class="form-group">
+        {{ form.gearselect.label }}
+        {{ form.gearselect(class_="form-control", id_="gear-select") }}
+    </div>
+    <div class="form-group">
+        {{ form.after_date.label }}
+        {{ form.after_date(class_="form-control", id_="after-date") }}
+        <small class="form-text text-muted">Leave blank to ignore constraint</small>
+    </div>
+    <div class="form-group">
+    {{ form.before_date.label }}
+    {{ form.before_date(class_="form-control", id_="before-date") }}
+    <small class="form-text text-muted">Leave blank to ignore constraint</small>
+    </div>
+    <div class="form-check">
+        {{ form.confirmation(class_="form-check-input") }}
+        {{ form.confirmation.label(class_="form-check-label") }}
+    </div>
+{{ form.submit(class_="btn btn-primary", name_="submit_button") }}
+</form>
+    <div id="loading-message" class="alert alert-info" role="alert">
+        <div class="spinner-border spinner-border-sm" role="status">
+            <span class="sr-only"></span>
+        </div>
+        We are processing your activities
+    </div>
+    <hr>
+{% endblock %}
