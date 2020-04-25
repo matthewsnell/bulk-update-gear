@@ -64,7 +64,7 @@ def update_gear(gear, before_date, after_date, headers):
         page_number += 1
 
     for activity in all_activities:
-        if activity["type"] == activity_type and activity['gear_id'] is None:
+        if activity["type"] == activity_type and activity['gear_id'] != gear:
             data = {
                 'gear_id': gear
             }
