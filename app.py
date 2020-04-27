@@ -109,14 +109,12 @@ def token_aquired():
         flash(is_valid_request(r), 'danger')
         return redirect('/')
     print("success")
-    session['access_token'] = r.json()['access_token']
-    session['headers'] = {"Authorization": f"Bearer {session.get('access_token')}"}
+    session['headers'] = {"Authorization": f"Bearer { r.json()['access_token']}"}
     return redirect('/addGear')
 
 
 @app.route('/addGear', methods=['GET', 'POST'])
 def add_gear():
-    print("session headers:" + session.get('headers'))
     if session.get('headers') is None:
         print("no access token redirecting")
         return redirect('/')
