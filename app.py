@@ -116,7 +116,8 @@ def token_aquired():
 
 @app.route('/addGear', methods=['GET', 'POST'])
 def add_gear():
-    if session.get('access_token') is None:
+    print("session headers:" + session.get('headers'))
+    if session.get('headers') is None:
         print("no access token redirecting")
         return redirect('/')
     r = requests.get("https://www.strava.com/api/v3/athlete", headers=session.get('headers'))
