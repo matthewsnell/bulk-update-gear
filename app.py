@@ -98,31 +98,32 @@ def home():
 def token_aquired():
     if 'request_count' not in session:
         session['request_count'] = 0
-    if request.args.get('error') is not None:
+    elif request.args.get('error') is not None:
         return redirect('/')
-    if session.get('access_token') is None:
+    else:
         r = requests.post(url="https://www.strava.com/oauth/token", params={'client_id': config.client_id,
-                                                                            'client_secret': config.client_secret,
-                                                                            'code': request.args.get('code'),
-                                                                            'grant_type': 'authorization_code'})
+                                                                        'client_secret': config.client_secret,
+                                                                        'code': request.args.get('code'),
+                                                                        'grant_type': 'authorization_code'})
         session['request_count'] = session.get('request_count') + 1
         if is_valid_request(r) != True:
             flash(is_valid_request(r), 'danger')
             return redirect('/')
         session['access_token'] = r.json()['access_token']
         session['headers'] = {"Authorization": f"Bearer {session.get('access_token')}"}
-    return redirect('/addGear')
+        return redirect('/addGear')
 
 
 @app.route('/addGear', methods=['GET', 'POST'])
 def add_gear():
-    print(session.get('request_count'))
     if session.get('access_token') is None:
+        print("no access token redirecting")
         return redirect('/')
     r = requests.get("https://www.strava.com/api/v3/athlete", headers=session.get('headers'))
     session['request_count'] = session.get('request_count') + 1
     if is_valid_request(r) != True:
         flash(is_valid_request(r), 'danger')
+        print("invalid request")
         return redirect('/')
     bikes = r.json()["bikes"]
     shoes = r.json()["shoes"]
