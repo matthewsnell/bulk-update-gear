@@ -12,6 +12,10 @@ import time
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
+app.config['SESSION_TYPE']: 'filesystem'
+app.config['SESSION_PERMANENT'] = True
+app.config['SESSION_USE_SIGNER'] = True
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=2)
 app.static_folder = 'static'
 EPOCH = datetime.utcfromtimestamp(0)
 app.config['CELERY_BROKER_URL'] = config.CELERY_BROKER_URL
