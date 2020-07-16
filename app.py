@@ -11,7 +11,11 @@ from celery import Celery
 import time
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.urandom(24)
+app.config['SECRET_KEY'] = config.APP_SECRET
+app.config['SESSION_TYPE']: 'filesystem'
+app.config['SESSION_PERMANENT'] = True
+app.config['SESSION_USE_SIGNER'] = True
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=2)
 app.static_folder = 'static'
 EPOCH = datetime.utcfromtimestamp(0)
 app.config['CELERY_BROKER_URL'] = config.CELERY_BROKER_URL
@@ -110,12 +114,14 @@ def token_aquired():
         return redirect('/')
     print("success")
     session['headers'] = {"Authorization": f"Bearer { r.json()['access_token']}"}
+    session.modified = True
     return redirect('/addGear')
 
 
 @app.route('/addGear', methods=['GET', 'POST'])
 def add_gear():
     if session.get('headers') is None:
+        flash('Something went wrong. Try again. If this persists, please get in touch.', 'danger')
         print("no access token redirecting")
         return redirect('/')
     r = requests.get("https://www.strava.com/api/v3/athlete", headers=session.get('headers'))
