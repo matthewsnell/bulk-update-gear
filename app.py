@@ -11,7 +11,7 @@ from celery import Celery
 import time
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.urandom(24)
+app.config['SECRET_KEY'] = config.APP_SECRET
 app.config['SESSION_TYPE']: 'filesystem'
 app.config['SESSION_PERMANENT'] = True
 app.config['SESSION_USE_SIGNER'] = True
@@ -95,13 +95,11 @@ def is_valid_request(r):
 
 @app.route('/')
 def home():
-    print("session data at home: ", session)
     return render_template('home.html', return_url=config.url, url=config.url, client_id=config.client_id)
 
 
 @app.route('/exchange_token')
 def token_aquired():
-    print("session data after strava redirect: ", session)
     print("checking token")
     if request.args.get('error') is not None:
         return redirect('/')
@@ -122,7 +120,6 @@ def token_aquired():
 
 @app.route('/addGear', methods=['GET', 'POST'])
 def add_gear():
-    print("sesion data at add gear: ", session)
     if session.get('headers') is None:
         flash('Something went wrong. Try again. If this persists, please get in touch.', 'danger')
         print("no access token redirecting")

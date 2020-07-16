@@ -1,5 +1,7 @@
 import os
 
+APP_SECRET = os.environ['APP_SECRET_KEY']
+
 if os.environ['FLASK_ENV'] == 'development':
     client_id = int(os.environ['STRAVA_CLIENT_ID'])
     client_secret = os.environ['STRAVA_CLIENT_SECRET']
