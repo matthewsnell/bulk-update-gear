@@ -91,7 +91,7 @@ def is_valid_request(r):
 
 @app.route('/')
 def home():
-    return render_template('home.html', return_url=config.url, url=config.url)
+    return render_template('home.html', return_url=config.url, url=config.url, client_id=config.client_id)
 
 
 @app.route('/exchange_token')
