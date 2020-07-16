@@ -110,6 +110,7 @@ def token_aquired():
         return redirect('/')
     print("success")
     session['headers'] = {"Authorization": f"Bearer { r.json()['access_token']}"}
+    session.modified = True
     return redirect('/addGear')
 
 
