@@ -12,7 +12,7 @@ if os.environ['FLASK_ENV'] == 'development':
 elif os.environ['FLASK_ENV'] == 'development-live':
     client_id = int(os.environ['STRAVA_CLIENT_ID'])
     client_secret = os.environ['STRAVA_CLIENT_SECRET']
-    url = 'https://https://bulk-update-dev.herokuapp.com/'
+    url = 'https://bulk-update-dev.herokuapp.com/'
     # Celery:
     CELERY_BROKER_URL = os.environ.get('REDIS_URL')
     CELERY_RESULT_BACKEND = os.environ.get('REDIS_URL')
