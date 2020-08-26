@@ -42,9 +42,9 @@ def internal_server_error(e):
 @celery.task
 def update_gear(gear, before_date, after_date, headers):
     if gear[0] == 'b':
-        activity_type = ['Ride', 'EBikeRide']
+        activity_type = ['Ride', 'EBikeRide', 'VirtualRide']
     elif gear[0] == 'g':
-        activity_type = ['Run']
+        activity_type = ['Run', 'VirtualRun']
     else:
         activity_type = None
     page_activities = ['Not empty']
