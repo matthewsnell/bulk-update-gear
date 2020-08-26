@@ -42,9 +42,9 @@ def internal_server_error(e):
 @celery.task
 def update_gear(gear, before_date, after_date, headers):
     if gear[0] == 'b':
-        activity_type = 'Ride'
+        activity_type = ['Ride', 'EBikeRide']
     elif gear[0] == 'g':
-        activity_type = 'Run'
+        activity_type = ['Run']
     else:
         activity_type = None
     page_activities = ['Not empty']
@@ -68,7 +68,7 @@ def update_gear(gear, before_date, after_date, headers):
         page_number += 1
 
     for activity in all_activities:
-        if activity["type"] == activity_type and activity['gear_id'] != gear:
+        if activity["type"] in activity_type and activity['gear_id'] != gear:
             data = {
                 'gear_id': gear
             }
