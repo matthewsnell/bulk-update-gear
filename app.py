@@ -1,14 +1,10 @@
-import time
-
 from flask import Flask, render_template, request, redirect, session, flash, url_for
 import requests
 from Forms import updateSettings
-import os
 import config
 import werkzeug
 from datetime import datetime, timedelta
 from celery import Celery
-import time
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = config.APP_SECRET
@@ -39,12 +35,33 @@ def internal_server_error(e):
     flash('Oops, something went wrong. Are you sure you granted the correct permissions?', 'danger')
     return redirect('/')
 
+
+def is_valid_request(r):
+    if r.status_code == 200 or r.status_code == 201:
+        return True
+    elif 400 < r.status_code < 405:
+        return 'Oops, looks like something went wrong. Are you sure you granted the correct permissions?'
+    elif r.status_code == 429:
+        return "Oops, we've hit our request limit from Strava. Try again in 15 minutes."
+    elif r.status_code == 500:
+        return "Oops, looks like Strava's having issues there end. Try again later."
+    else:
+        return "Oops, looks like something went wrong."
+
+
+# Background update task
 @celery.task
-def update_gear(gear, before_date, after_date, headers):
+def update_gear(gear, before_date, after_date, headers, only_virtual):
     if gear[0] == 'b':
-        activity_type = ['Ride', 'EBikeRide', 'VirtualRide']
+        if only_virtual:
+            activity_type = ['VirtualRide']
+        else:
+            activity_type = ['Ride', 'EBikeRide', 'VirtualRide']
     elif gear[0] == 'g':
-        activity_type = ['Run', 'VirtualRun']
+        if only_virtual:
+            activity_type = ['VirtualRun']
+        else:
+            activity_type = ['Run', 'VirtualRun']
     else:
         activity_type = None
     page_activities = ['Not empty']
@@ -80,19 +97,6 @@ def update_gear(gear, before_date, after_date, headers):
             elif request_count > 505:
                 break
 
-def is_valid_request(r):
-    if r.status_code == 200 or r.status_code == 201:
-        return True
-    elif 400 < r.status_code < 405:
-        return 'Oops, looks like something went wrong. Are you sure you granted the correct permissions?'
-    elif r.status_code == 429:
-        return "Oops, we've hit our request limit from Strava. Try again in 15 minutes."
-    elif r.status_code == 500:
-        return "Oops, looks like Strava's having issues there end. Try again later."
-    else:
-        return "Oops, looks like something went wrong."
-
-
 @app.route('/')
 def home():
     return render_template('home.html', return_url=config.url, url=config.url, client_id=config.client_id)
@@ -105,15 +109,15 @@ def token_aquired():
         return redirect('/')
 
     r = requests.post(url="https://www.strava.com/oauth/token", params={'client_id': config.client_id,
-                                                                    'client_secret': config.client_secret,
-                                                                    'code': request.args.get('code'),
-                                                                    'grant_type': 'authorization_code'})
+                                                                        'client_secret': config.client_secret,
+                                                                        'code': request.args.get('code'),
+                                                                        'grant_type': 'authorization_code'})
     print("send request for access token")
     if is_valid_request(r) != True:
         flash(is_valid_request(r), 'danger')
         return redirect('/')
     print("success")
-    session['headers'] = {"Authorization": f"Bearer { r.json()['access_token']}"}
+    session['headers'] = {"Authorization": f"Bearer {r.json()['access_token']}"}
     session.modified = True
     return redirect('/addGear')
 
@@ -143,14 +147,14 @@ def add_gear():
             if after_date is not None:
                 after_date = convert_to_epoch(datetime.strptime(after_date.isoformat(), "%Y-%m-%d"))
             gear = form.gearselect.data
-            update_gear.delay(gear, before_date, after_date, session.get('headers'))
+            only_virtual = form.only_virtual.data
+            update_gear.delay(gear, before_date, after_date, session.get('headers'), only_virtual)
             return redirect('result')
         else:
             flash(form.errormessage, 'danger')
             return render_template('add_gear.html', form=form)
 
     return render_template('add_gear.html', form=form)
-
 
 
 @app.route('/result')

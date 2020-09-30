@@ -12,6 +12,10 @@
         {{ form.gearselect.label }}
         {{ form.gearselect(class_="form-control", id_="gear-select") }}
     </div>
+    <div class="form-check">
+        {{ form.only_virtual(class_="form-check-input", id_="only-virtual") }}
+        {{ form.only_virtual.label(class_="form-check-label") }}
+    </div>
     <div class="form-group">
         {{ form.after_date.label }}
         {{ form.after_date(class_="form-control", id_="after-date") }}

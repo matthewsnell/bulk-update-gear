@@ -1,10 +1,11 @@
 from wtforms import Form, StringField, SelectField, validators, BooleanField, SubmitField
 from wtforms.fields.html5 import DateField
 import datetime
-import flask
+
 
 class updateSettings(Form):
-    gearselect = SelectField('Select the gear you want to add', choices=[('black', 'white')])
+    gearselect = SelectField('Select the gear you want to add')
+    only_virtual = BooleanField(label='Only update virutal activities.')
     before_date = DateField(label='Apply to all activities before')
     after_date = DateField(label='Apply to all activites after')
     confirmation = BooleanField(label='I know what I am doing and take full responsibility!',
