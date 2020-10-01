@@ -5,7 +5,7 @@ import datetime
 
 class updateSettings(Form):
     gearselect = SelectField('Select the gear you want to add')
-    only_virtual = BooleanField(label='Only update virutal activities.')
+    only_virtual = BooleanField(label='Only update virtual activities.')
     before_date = DateField(label='Apply to all activities before')
     after_date = DateField(label='Apply to all activites after')
     confirmation = BooleanField(label='I know what I am doing and take full responsibility!',
