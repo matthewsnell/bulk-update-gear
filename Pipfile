@@ -6,13 +6,22 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-flask = "*"
 requests = "*"
 httpie = "*"
-wtforms = "*"
-jinja2 = "==2.11.3"
+jinja2 = "*"
 gunicorn = "*"
 celery = "*"
 redis = "*"
+certifi = "2020.4.5.1"
+chardet = "3.0.4"
+click = "7.1.1"
+Flask = "2.2.2"
+idna = "2.9"
+itsdangerous = "1.1.0"
+MarkupSafe = "1.1.1"
+urllib3 = "1.26.5"
+Werkzeug = "1.0.1"
+WTForms = "2.2.1"
+
 [requires]
 python_version = "3.9"
