@@ -12,9 +12,10 @@
         {{ form.gearselect.label }}
         {{ form.gearselect(class_="form-control", id_="gear-select") }}
     </div>
-    <div class="form-check">
-        {{ form.only_virtual(class_="form-check-input", id_="only-virtual") }}
-        {{ form.only_virtual.label(class_="form-check-label") }}
+    <div class="form-group">
+        {{ form.activity_type.label }}
+        {{ form.activity_type(class_="form-control", id_="activity-select") }}
+        <small class="form-text text-muted">Use Ctrl click to select multiple</small>
     </div>
     <div class="form-group">
         {{ form.after_date.label }}
@@ -39,4 +40,34 @@
         We are processing your activities
     </div>
     <hr>
+
+    <script>
+    $( document ).ready(function() {
+    $('#gear-select').change();
+    });
+
+    function add_activities(options) {
+        var activity_select = $('#activity-select')
+        console.log(options)
+        activity_select.empty();
+        $.each(options, function (i, item) {
+        activity_select.append($('<option>', {
+        value: item,
+        text : item
+        }));
+    });
+    }
+
+    $('#gear-select').on('change', function () {
+        var gear_val = $('#gear-select').val();
+        console.log(gear_val)
+        if (gear_val[0] === "b") {
+            add_activities(["Ride", "EBikeRide", "Handcycle", "Velomobile", "VirtualRide"])
+        } else if (gear_val[0] === "g"){
+            add_activities(["Run", "Hike", "Walk", "VirtualRun"])
+        } else {
+            add_activities(["Ride", "EBikeRide", "Handcycle", "Velomobile", "VirtualRide", "Run", "Hike", "Walk", "VirtualRun"])
+        }
+    })
+</script>
 {% endblock %}

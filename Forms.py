@@ -1,10 +1,10 @@
-from wtforms import Form, StringField, SelectField, validators, BooleanField, SubmitField, DateField
+from wtforms import Form, StringField, SelectField, validators, BooleanField, SubmitField, DateField, SelectMultipleField
 from wtforms.fields import DateField
 import datetime
 
 class updateSettings(Form):
     gearselect = SelectField('Select the gear you want to add')
-    only_virtual = BooleanField(label='Only update virtual activities.')
+    activity_type = SelectMultipleField('Select the activity type to update', validators=[validators.input_required()])
     before_date = DateField(label='Apply to all activities before')
     after_date = DateField(label='Apply to all activites after')
     confirmation = BooleanField(label='I have double checked all fields are correct!',
