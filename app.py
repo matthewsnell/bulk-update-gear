@@ -14,10 +14,10 @@ app.config['SESSION_USE_SIGNER'] = True
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=2)
 app.static_folder = 'static'
 EPOCH = datetime.utcfromtimestamp(0)
-app.config['CELERY_BROKER_URL'] = config.CELERY_BROKER_URL
-app.config['CELERY_RESULT_BACKEND'] = config.CELERY_RESULT_BACKEND
+app.config['broker_url'] = config.CELERY_BROKER_URL
+app.config['result_backend'] = config.CELERY_RESULT_BACKEND
 
-celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'], backend=app.config['CELERY_RESULT_BACKEND'])
+celery = Celery(app.name, broker=app.config['broker_url'], backend=app.config['result_backend'])
 celery.conf.update(app.config)
 
 
@@ -137,6 +137,7 @@ def add_gear():
     shoes = r.json()["shoes"]
     form = updateSettings(request.form)
     form.gearselect.choices = [(item['id'], item['name']) for item in (bikes + shoes)]
+    form.gearselect.choices.append((None, 'No Gear'))
 
     if request.method == 'POST':
         if form.validate_on_submit():
