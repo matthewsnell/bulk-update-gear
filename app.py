@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, session, flash, url
 import requests
 from Forms import updateSettings
 import config
+import consts
 import werkzeug
 from datetime import datetime, timedelta
 from celery import Celery
@@ -14,10 +15,10 @@ app.config['SESSION_USE_SIGNER'] = True
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=2)
 app.static_folder = 'static'
 EPOCH = datetime.utcfromtimestamp(0)
-app.config['CELERY_BROKER_URL'] = config.CELERY_BROKER_URL
-app.config['CELERY_RESULT_BACKEND'] = config.CELERY_RESULT_BACKEND
+app.config['broker_url'] = config.CELERY_BROKER_URL
+app.config['result_backend'] = config.CELERY_RESULT_BACKEND
 
-celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'], backend=app.config['CELERY_RESULT_BACKEND'])
+celery = Celery(app.name, broker=app.config['broker_url'], backend=app.config['result_backend'])
 celery.conf.update(app.config)
 
 
@@ -51,19 +52,7 @@ def is_valid_request(r):
 
 # Background update task
 @celery.task
-def update_gear(gear, before_date, after_date, headers, only_virtual):
-    if gear[0] == 'b':
-        if only_virtual:
-            activity_type = ['VirtualRide']
-        else:
-            activity_type = ['Ride', 'EBikeRide', 'VirtualRide']
-    elif gear[0] == 'g':
-        if only_virtual:
-            activity_type = ['VirtualRun']
-        else:
-            activity_type = ['Run', 'VirtualRun']
-    else:
-        activity_type = None
+def update_gear(gear, before_date, after_date, headers, activity_type):
     page_activities = ['Not empty']
     page_number = 1
     all_activities = []
@@ -137,6 +126,7 @@ def add_gear():
     shoes = r.json()["shoes"]
     form = updateSettings(request.form)
     form.gearselect.choices = [(item['id'], item['name']) for item in (bikes + shoes)]
+    form.gearselect.choices.append(("", 'No Gear'))
 
     if request.method == 'POST':
         if form.validate_on_submit():
@@ -147,8 +137,8 @@ def add_gear():
             if after_date is not None:
                 after_date = convert_to_epoch(datetime.strptime(after_date.isoformat(), "%Y-%m-%d"))
             gear = form.gearselect.data
-            only_virtual = form.only_virtual.data
-            update_gear.delay(gear, before_date, after_date, session.get('headers'), only_virtual)
+            activity_types = form.activity_type.data
+            update_gear.delay(gear, before_date, after_date, session.get('headers'), activity_types)
             return redirect('result')
         else:
             flash(form.errormessage, 'danger')
