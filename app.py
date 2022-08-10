@@ -126,7 +126,7 @@ def add_gear():
     shoes = r.json()["shoes"]
     form = updateSettings(request.form)
     form.gearselect.choices = [(item['id'], item['name']) for item in (bikes + shoes)]
-    form.gearselect.choices.append((None, 'No Gear'))
+    form.gearselect.choices.append(("", 'No Gear'))
 
     if request.method == 'POST':
         if form.validate_on_submit():
